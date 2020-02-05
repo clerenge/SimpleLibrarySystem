@@ -11,7 +11,8 @@ namespace SimpleLibrarySystem
         public Catalog _catalog;
         public Librarian _librarian;
         public List<Student> _students;
-        public long _numOfStudents;
+        public List<Instructor> _instructors;
+
 
         /// <summary>
         /// Creates an SLS(Simple Library System) with an auto generated catalog, librarian, and students (constructor)
@@ -25,6 +26,7 @@ namespace SimpleLibrarySystem
             _catalog = new Catalog(employeeId);
             _librarian = new Librarian("Aric", "Campbell", "100 Dogwood Drive, Williamsburg VA", 1234567, employeeId);
             _students = new List<Student>();
+            _instructors = new List<Instructor>();
             if (populateLibrary)
             {
                 List<Book> books = GetListOfRandomBooks(n);
@@ -33,10 +35,10 @@ namespace SimpleLibrarySystem
                     _catalog.AddABook(_librarian, b);
                 }
                 _students = GetListOfRandomStudents(n);
-
+                _instructors = GetListOfRandomInstructors(n);
             }
             
-            _numOfStudents = _students.Count();
+            //_numOfStudents = _students.Count();
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace SimpleLibrarySystem
             _catalog = new Catalog(librarian.GetId());
             _librarian = librarian;
             _students = new List<Student>();
-            _numOfStudents = 0;
+            _instructors = new List<Instructor>();
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace SimpleLibrarySystem
         /// <param name="librarian">librarian object to be the SLS's only librarian that can add and remove books</param>
         /// <param name="students">student object to be the SLS's students</param>
         /// <param name="books">list of books for the SLS's catalog</param>
-        public SLS(Librarian librarian, List<Student> students, List<Book> books)
+        public SLS(Librarian librarian, List<Student> students, List<Instructor> instructors, List<Book> books)
         {
             _catalog = new Catalog(librarian.GetId());
             foreach(Book b in books)
@@ -66,7 +68,7 @@ namespace SimpleLibrarySystem
             }
             _librarian = librarian;
             _students = students;
-            _numOfStudents = _students.Count();
+            _instructors = instructors;
         }
 
 
@@ -77,7 +79,6 @@ namespace SimpleLibrarySystem
         public void AddAStudent(Student student)
         {
             _students.Add(student);
-            _numOfStudents = _students.Count();
         }
 
         /// <summary>
@@ -90,16 +91,26 @@ namespace SimpleLibrarySystem
             {
                 _students.Remove(student);
             }
-            _numOfStudents = _students.Count();
         }
 
         /// <summary>
         /// Returns how many students are in the SLS
         /// </summary>
         /// <returns></returns>
-        public long NumberOfStudents()
+        public int NumberOfStudents
         {
-            return _numOfStudents;
+            get
+            {
+                return _students.Count;
+            }
+        }
+
+        public int NumberOfInstructors
+        {
+            get
+            {
+                return _instructors.Count;
+            }
         }
 
         /// <summary>
@@ -113,8 +124,20 @@ namespace SimpleLibrarySystem
 
             for(int i = 0; i < n; i++)
             {
-                s = new Student("Student" + i, "lastName", i, 2000 + i);
+                s = new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString());
                 _students.Add(s);
+            }
+        }
+
+        public void GenerateRandomInstructors(int n)
+        {
+            Instructor instructor;
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i++)
+            {
+                instructor = new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString());
+                _instructors.Add(instructor);
             }
         }
 
@@ -147,11 +170,26 @@ namespace SimpleLibrarySystem
 
             for (int i = 0; i < n; i++)
             {
-                s = new Student("Student" + i, "lastName", i, 2000 + i);
+                s = new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString());
                 students.Add(s);
             }
 
             return students;
+        }
+
+        public List<Instructor> GetListOfRandomInstructors(int n)
+        {
+            Instructor instructor;
+            List<Instructor> instructors = new List<Instructor>();
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i++)
+            {
+                instructor = new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString());
+                instructors.Add(instructor);
+            }
+
+            return instructors;
         }
 
         /// <summary>
@@ -183,9 +221,10 @@ namespace SimpleLibrarySystem
             return _students;
         }
 
-        
-
-        
+        public List<Instructor> GetAllInstructors()
+        {
+            return _instructors;
+        }
 
     }
 }

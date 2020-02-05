@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimpleLibrarySystem
@@ -13,14 +14,177 @@ namespace SimpleLibrarySystem
     {
         static void Main(string[] args)
         {
+            int n = 10;
+            SLS librarySystem = new SLS(true, n);
+            Student student = librarySystem.GetAllStudents()[0];
+            Instructor instructor = librarySystem.GetAllInstructors()[1];
+            List<Book> books = librarySystem._catalog.GetAllBooks();
+            int milliseconds = 2500;
+            
+            Catalog catalog = librarySystem._catalog;
+            Console.WriteLine("Library System");
+            Console.WriteLine();
+            Console.WriteLine("Printing books in system");
+            Thread.Sleep(milliseconds);
+            librarySystem._catalog.PrintBooks();
+            Thread.Sleep(milliseconds+milliseconds);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Printing User Information");
+            student.UserInfo();
+            Thread.Sleep(milliseconds);
+          
+            instructor.UserInfo();
+            Thread.Sleep(milliseconds + milliseconds);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
 
+            Console.WriteLine("Student " + student.FullName + " will now check out 3 books");
+            Thread.Sleep(milliseconds + milliseconds);
+            student.CheckOutBook(books.ElementAt(0), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            student.CheckOutBook(books.ElementAt(1), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            student.CheckOutBook(books.ElementAt(2), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            //Throws exception as it should
+            /*
+            student.CheckOutBook(books.ElementAt(3), catalog);
+            student.PrintBooksCheckedOut();
+            */
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Student " + student.FullName + " will now return all books");
+            Thread.Sleep(milliseconds + milliseconds);
+            student.ReturnBook(books.ElementAt(2), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            student.ReturnBook(books.ElementAt(1), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            student.ReturnBook(books.ElementAt(0), catalog);
+            student.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Instructor " + instructor.FullName + " will now check out 5 books");
+            Thread.Sleep(milliseconds + milliseconds);
+            instructor.CheckOutBook(books.ElementAt(0), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.CheckOutBook(books.ElementAt(1), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.CheckOutBook(books.ElementAt(2), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.CheckOutBook(books.ElementAt(3), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.CheckOutBook(books.ElementAt(4), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            //Throws Exception as it should
+            /*
+            instructor.CheckOutBook(books.ElementAt(4), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            */
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Instructor " + instructor.FullName + " will now return books");
+            Thread.Sleep(milliseconds + milliseconds);
+            instructor.ReturnBook(books.ElementAt(4), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.ReturnBook(books.ElementAt(3), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.ReturnBook(books.ElementAt(2), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.ReturnBook(books.ElementAt(1), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+            //Console.ReadLine();
+
+            instructor.ReturnBook(books.ElementAt(0), catalog);
+            instructor.PrintBooksCheckedOut();
+            Thread.Sleep(milliseconds);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            librarySystem._catalog.PrintBooks();
+
+
+
+            Console.WriteLine("Enter any key to quit");
+            Console.ReadLine();
+
+
+
+
+
+            /*
             int n = 10;
             SLS librarySystem = new SLS(true, n);
             Random rand = new Random();
             List<Student> students = librarySystem.GetAllStudents();
+            List<Instructor> instructors = librarySystem.GetAllInstructors();
             List<Book> books = librarySystem._catalog.GetAllBooks();
             Librarian librarian = librarySystem._librarian;
             Student s = students.ElementAt(rand.Next(n));
+            Instructor i = instructors.ElementAt(rand.Next(n));
             bool quit = false;
             String isbn = "";
             String bookIdInput = "";
@@ -29,7 +193,6 @@ namespace SimpleLibrarySystem
             BookType type = BookType.art;
             BookLocation location = BookLocation.firstFloor;
             long bookID = 0;
-            //bool checkedOut = false;
 
             while(!quit)
             {
@@ -37,7 +200,8 @@ namespace SimpleLibrarySystem
                 Console.WriteLine();
                 Console.WriteLine("Student Mode or Librarian Mode?");
                 Console.WriteLine("'1' for Student");
-                Console.WriteLine("'2' for Librarian");
+                Console.WriteLine("'2' for Instructor");
+                Console.WriteLine("'3' for Librarian");
 
 
                 try
@@ -46,13 +210,12 @@ namespace SimpleLibrarySystem
                     switch(key)
                     {
                         case '1':
-                            
                             Book b;
                             bool loop = true;
                             while (loop)
                             {
                                 Console.WriteLine("**************** Student Mode **********************");
-                                s.PrintStudentInfo();
+                                s.UserInfo();
                                 Console.WriteLine("Checking Out or Returning?");
                                 Console.WriteLine("'1' for Checking Out");
                                 Console.WriteLine("'2' for Returning");
@@ -91,7 +254,54 @@ namespace SimpleLibrarySystem
                                 }
                             }
                             break;
+
                         case '2':
+                            Book b2;
+                            bool loop2 = true;
+                            while (loop2)
+                            {
+                                Console.WriteLine("**************** Instructor Mode **********************");
+                                i.UserInfo();
+                                Console.WriteLine("Checking Out or Returning?");
+                                Console.WriteLine("'1' for Checking Out");
+                                Console.WriteLine("'2' for Returning");
+                                key = Console.ReadKey().KeyChar;
+
+                                switch (key)
+                                {
+                                    case '1':
+                                        librarySystem._catalog.PrintBooks();
+                                        Console.Write("Type the isbn of the book you want to check out: ");
+                                        string input1 = Console.ReadLine();
+
+                                        b2 = books.Where(x => x.GetIsbn() == input1).FirstOrDefault();
+                                        i.CheckOutBook(new Book(b2.GetBookId(), b2.GetTitle(), b2.GetAuthor(), b2.GetIsbn(), b2.GetType(), b2.GetLocation()), librarySystem._catalog);
+                                        Console.WriteLine("Book with ISBN#: " + b2.GetIsbn() + " Checked Out!");
+                                        Console.WriteLine();
+                                        break;
+                                    case '2':
+                                        s.PrintBooksCheckedOut();
+                                        Console.Write("Type the isbn of the book you want to return: ");
+                                        string input2 = Console.ReadLine();
+
+                                        b2 = s.GetBooksCheckedOut().Where(x => x.GetIsbn() == input2).FirstOrDefault();
+                                        i.ReturnBook(new Book(b2.GetBookId(), b2.GetTitle(), b2.GetAuthor(), b2.GetIsbn(), b2.GetType(), b2.GetLocation()), librarySystem._catalog);
+                                        Console.WriteLine("Book with ISBN#: " + b2.GetIsbn() + " Returned!");
+                                        Console.WriteLine();
+                                        break;
+                                }
+                                Console.WriteLine("Continue in Instructor Mode?");
+                                Console.WriteLine("1 for yes");
+                                Console.WriteLine("2 for no");
+                                char looper = Console.ReadKey().KeyChar;
+                                if (looper == '2')
+                                {
+                                    loop = false;
+                                }
+                            }
+                            
+                            break;
+                        case '3':
 
                             Console.WriteLine("**************** Librarian Mode **********************");
                             Console.WriteLine("Librarians Can Add Books to the Catalog");
@@ -141,8 +351,8 @@ namespace SimpleLibrarySystem
                             librarySystem._catalog.AddABook(librarySystem._librarian, b);
                             Console.WriteLine(b.GetTitle() + " Successfully Added to the Catalog");
                             Console.WriteLine();
-
                             break;
+
                         default:
                             Console.WriteLine("Invalid Input");
                             break;
@@ -159,7 +369,7 @@ namespace SimpleLibrarySystem
                 
             }
             
-            
+            */
         }
     }
 }

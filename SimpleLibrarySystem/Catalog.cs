@@ -100,23 +100,25 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="student"></param>
         /// <param name="book"></param>
-       public void CheckOutBook(Student student, Book book)
+       public void CheckOutBook(Person person, Book book)
        {
-            if(book != null && student != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()) && !student.ReachedRentLimit())
+            if(book != null && person != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()) && !person.ReachedRentLimit())
             {
                 foreach(Book b in _books)
                 {
                     if(b.IsbnMatch(book))
                     {
-                        b.MarkCheckOut();
+                        b.MarkCheckOut(person);
                     }
                 }
             }
        }
 
-        public void ReturnBook(Student student, Book book)
+
+
+        public void ReturnBook(Person person, Book book)
         {
-            if(book != null && student != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()))
+            if(book != null && person != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()))
             {
                 foreach(Book b in _books)
                 {
@@ -127,6 +129,8 @@ namespace SimpleLibrarySystem
                 }
             }
         }
+
+ 
 
         public void PrintBooks()
         {
