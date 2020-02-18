@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleLibrarySystem.LibaryItems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace SimpleLibrarySystem
         private string _address;
         private string _ssn;
         private string _wNum;
-        private Book[] _booksCheckedOut;
+        private LibraryItem[] _itemsCheckedOut;
         private int _rentLimit;
 
         public Person()
@@ -29,7 +30,7 @@ namespace SimpleLibrarySystem
             SSN = social;
             WNum = wnum;
             RentLimit = bookRentLimit;
-            _booksCheckedOut = new Book[RentLimit];
+            _itemsCheckedOut = new LibraryItem[RentLimit];
         }
 
         /// <summary>
@@ -37,18 +38,17 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="book"></param>
         /// <param name="catalog"></param>
-        public void CheckOutBook(Book book, Catalog catalog)
+        public void CheckOutItem(LibraryItem item, Catalog catalog)
         {
             if (!ReachedRentLimit())
             {
-                for (int i = 0; i < _booksCheckedOut.Length; i++)
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
                 {
-                    if (_booksCheckedOut[i] == null)
+                    if (_itemsCheckedOut[i] == null)
                     {
-                        catalog.CheckOutBook(this, book);
-                        //book.MarkCheckOut(this);
-                        _booksCheckedOut[i] = book;
-                        i = _booksCheckedOut.Length;
+                        catalog.CheckOutItem(this, item);
+                        _itemsCheckedOut[i] = item;
+                        i = _itemsCheckedOut.Length;
                     }
                 }
             }
@@ -56,11 +56,11 @@ namespace SimpleLibrarySystem
             {
                 if(RentLimit == 3)
                 {
-                    throw new Exception("Student has too many Books Being Rented");
+                    throw new Exception("Student has too many items Being Rented");
                 }
                 else if(RentLimit == 5)
                 {
-                    throw new Exception("Instructor has too many Books Being Rented");
+                    throw new Exception("Instructor has too many items Being Rented");
                 }
                 else
                 {
@@ -76,20 +76,25 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="book"></param>
         /// <param name="catalog"></param>
-        public void ReturnBook(Book book, Catalog catalog)
+        public void ReturnItem(LibraryItem item, Catalog catalog)
         {
-            if (book != null && catalog != null && _booksCheckedOut.Any(x => x.GetIsbn() == book.GetIsbn()))
+            if (item != null && catalog != null && _itemsCheckedOut.Any(x => x != null && x.ID == item.ID))
             {
-                for (int i = 0; i < _booksCheckedOut.Length; i++)
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
                 {
-                    if (_booksCheckedOut[i] != null && _booksCheckedOut[i].GetIsbn() == book.GetIsbn())
+                    if (_itemsCheckedOut[i] != null && _itemsCheckedOut[i].ID == item.ID)
                     {
-                        catalog.ReturnBook(this, book);
-                        _booksCheckedOut[i] = null;
-                        i = _booksCheckedOut.Length;
+                        catalog.ReturnAnItem(this, item);
+                        _itemsCheckedOut[i] = null;
+                        i = _itemsCheckedOut.Length;
                     }
                 }
             }
+        }
+
+        public LibraryItem[] GetItemsCheckedOut()
+        {
+            return _itemsCheckedOut;
         }
 
         /// <summary>
@@ -98,13 +103,70 @@ namespace SimpleLibrarySystem
         /// <returns></returns>
         public Book[] GetBooksCheckedOut()
         {
-            return _booksCheckedOut;
+            Book[] books = new Book[NumOfBooksCheckedOut];
+            int i = 0;
+            foreach(LibraryItem item in _itemsCheckedOut)
+            {
+                if(item is Book)
+                {
+                    books[i] = (Book)item;
+                    i++;
+                }
+            }
+            return books;
         }
+
+        public EBook[] GetEBooksCheckedOut()
+        {
+            EBook[] Ebooks = new EBook[NumOfEBooksCheckedOut];
+            int i = 0;
+            foreach (LibraryItem item in _itemsCheckedOut)
+            {
+                if (item is EBook)
+                {
+                    Ebooks[i] = (EBook)item;
+                    i++;
+                }
+            }
+            return Ebooks;
+        }
+
+        public Journal[] GetJournalsCheckedOut()
+        {
+            Journal[] journals = new Journal[NumOfJournalsCheckedOut];
+            int i = 0;
+            foreach (LibraryItem item in _itemsCheckedOut)
+            {
+                if (item is Journal)
+                {
+                    journals[i] = (Journal)item;
+                    i++;
+                }
+            }
+            return journals;
+        }
+
+        public Magazine[] GetMagazinesCheckedOut()
+        {
+            Magazine[] magazines = new Magazine[NumOfMagazinesCheckedOut];
+            int i = 0;
+            foreach (LibraryItem item in _itemsCheckedOut)
+            {
+                if (item is Magazine)
+                {
+                    magazines[i] = (Magazine)item;
+                    i++;
+                }
+            }
+            return magazines;
+        }
+
+
 
         public void UserInfo()
         {
             Console.WriteLine("-----------------------------");
-            if (_booksCheckedOut.Length == 3)
+            if (_itemsCheckedOut.Length == 3)
             {
                 Console.WriteLine("Student Info");
             }
@@ -122,15 +184,15 @@ namespace SimpleLibrarySystem
         /// <summary>
         /// Prints out all the books an instructor has checked out
         /// </summary>
-        public void PrintBooksCheckedOut()
+        public void PrintItemsCheckedOut()
         {
             Console.WriteLine("-----------------------------");
-            Console.WriteLine("Printing Books Checked Out");
-            foreach (Book b in _booksCheckedOut)
+            Console.WriteLine("Printing Items Checked Out");
+            foreach (LibraryItem item in _itemsCheckedOut)
             {
-                if (b != null)
+                if (item != null)
                 {
-                    b.PrintBookInfo();
+                    item.PrintItemInfo();
                 }
 
             }
@@ -307,9 +369,73 @@ namespace SimpleLibrarySystem
             get
             {
                 int count = 0;
-                for (int i = 0; i < _booksCheckedOut.Length; i++)
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
                 {
-                    if (_booksCheckedOut[i] != null)
+                    if (_itemsCheckedOut[i] != null && _itemsCheckedOut[i] is Book)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        }
+
+        public int NumOfEBooksCheckedOut
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
+                {
+                    if (_itemsCheckedOut[i] != null && _itemsCheckedOut[i] is EBook)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        }
+
+        public int NumOfJournalsCheckedOut
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
+                {
+                    if (_itemsCheckedOut[i] != null && _itemsCheckedOut[i] is Journal)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        }
+
+        public int NumOfMagazinesCheckedOut
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
+                {
+                    if (_itemsCheckedOut[i] != null && _itemsCheckedOut[i] is Magazine)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        }
+
+        public int NumOfItemsCheckedOut
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _itemsCheckedOut.Length; i++)
+                {
+                    if (_itemsCheckedOut[i] != null)
                     {
                         count++;
                     }

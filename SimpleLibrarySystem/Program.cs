@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleLibrarySystem.LibaryItems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,15 +20,179 @@ namespace SimpleLibrarySystem
             Student student = librarySystem.GetAllStudents()[0];
             Instructor instructor = librarySystem.GetAllInstructors()[1];
             List<Book> books = librarySystem._catalog.GetAllBooks();
+            List<EBook> ebooks = librarySystem._catalog.GetAllEBooks();
+            List<Journal> journals = librarySystem._catalog.GetAllJournals();
+            List<Magazine> magazines = librarySystem._catalog.GetAllMagazines();
+
+            List<LibraryItem> items = new List<LibraryItem>();
+
             int milliseconds = 2500;
             
-            Catalog catalog = librarySystem._catalog;
+            //Catalog librarySystem._catalog = librarySystem._catalog;
+            //Librarian librarySystem._librarian = librarySystem._librarian;
             Console.WriteLine("Library System");
+            Console.WriteLine();
+
+            Book book = books.ElementAt(1);
+            Book clonedBook = (Book)librarySystem._librarian.CloneAnItem(librarySystem._catalog, book);
+            Book clonedBook2 = (Book)librarySystem._librarian.CloneAnItem(librarySystem._catalog, clonedBook);
+            EBook eBook = ebooks.ElementAt(2);
+            EBook clonedEBook = (EBook)librarySystem._librarian.CloneAnItem(librarySystem._catalog, eBook);
+            Journal journal = journals.ElementAt(3);
+            Journal clonedJournal = (Journal)librarySystem._librarian.CloneAnItem(librarySystem._catalog, journal);
+            Magazine magazine = magazines.ElementAt(4);
+            Magazine clonedMagazine = (Magazine)librarySystem._librarian.CloneAnItem(librarySystem._catalog, magazine);
+
+            //STUDENT PART
+            Console.WriteLine("Student will check out book");
+            student.CheckOutItem(book, librarySystem._catalog);
+
+            Console.WriteLine("Student will check out an ebook");
+            student.CheckOutItem(eBook, librarySystem._catalog);
+
+            Console.WriteLine("Student will check out an journal");
+            student.CheckOutItem(journal, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+            Console.WriteLine("Student will return journal");
+            student.ReturnItem(journal, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+            Console.WriteLine("Student will check out a magazine");
+            student.CheckOutItem(magazine, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+            Console.WriteLine("Student will return magazine, ebook, book");
+            student.ReturnItem(magazine, librarySystem._catalog);
+            student.ReturnItem(eBook, librarySystem._catalog);
+            student.ReturnItem(book, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+            Console.WriteLine("Student will rent clones of the same item");
+            student.CheckOutItem(book, librarySystem._catalog);
+            student.CheckOutItem(clonedBook, librarySystem._catalog);
+            student.CheckOutItem(clonedBook2, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+            Console.WriteLine("Student will return all cloned books");
+            student.ReturnItem(book, librarySystem._catalog);
+            student.ReturnItem(clonedBook, librarySystem._catalog);
+            student.ReturnItem(clonedBook2, librarySystem._catalog);
+
+            student.PrintItemsCheckedOut();
+
+
+
+
+            //INSTRUCTOR PART
+            Console.WriteLine("Instructor will check out book");
+            instructor.CheckOutItem(book, librarySystem._catalog);
+
+            Console.WriteLine("Instructor will check out an ebook");
+            instructor.CheckOutItem(eBook, librarySystem._catalog);
+
+            Console.WriteLine("Instructor will check out an journal");
+            instructor.CheckOutItem(journal, librarySystem._catalog);
+
+            instructor.PrintItemsCheckedOut();
+
+            Console.WriteLine("Instructor will return journal");
+            instructor.ReturnItem(journal, librarySystem._catalog);
+
+            instructor.PrintItemsCheckedOut();
+
+            Console.WriteLine("Instructor will check out a magazine");
+            instructor.CheckOutItem(magazine, librarySystem._catalog);
+
+            instructor.PrintItemsCheckedOut();
+
+            Console.WriteLine("Instructor will return magazine, ebook, book");
+            instructor.ReturnItem(magazine, librarySystem._catalog);
+            instructor.ReturnItem(eBook, librarySystem._catalog);
+            instructor.ReturnItem(book, librarySystem._catalog);
+
+            instructor.PrintItemsCheckedOut();
+
+            Console.WriteLine("Instructor will rent clones of the same item");
+            instructor.CheckOutItem(book, librarySystem._catalog);
+            instructor.CheckOutItem(clonedBook, librarySystem._catalog);
+            instructor.CheckOutItem(clonedBook2, librarySystem._catalog);
+
+            instructor.PrintItemsCheckedOut();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
+            Console.WriteLine("Printing items in system");
+            Thread.Sleep(milliseconds);
+            librarySystem._catalog.PrintItems();
+            Thread.Sleep(milliseconds+milliseconds);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("Printing books in system");
             Thread.Sleep(milliseconds);
-            librarySystem._catalog.PrintBooks();
-            Thread.Sleep(milliseconds+milliseconds);
+            librarySystem._catalog.PrintItems();
+            Thread.Sleep(milliseconds + milliseconds);
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
@@ -67,6 +232,7 @@ namespace SimpleLibrarySystem
             student.CheckOutBook(books.ElementAt(3), catalog);
             student.PrintBooksCheckedOut();
             */
+            /*
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
@@ -127,7 +293,7 @@ namespace SimpleLibrarySystem
             instructor.PrintBooksCheckedOut();
             Thread.Sleep(milliseconds);
             */
-
+            /*
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
@@ -170,7 +336,7 @@ namespace SimpleLibrarySystem
 
             Console.WriteLine("Enter any key to quit");
             Console.ReadLine();
-
+            */
 
 
 

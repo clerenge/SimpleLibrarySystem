@@ -49,14 +49,23 @@ namespace SimpleLibrarySystem
             return _employeeId;
         }
 
+        public LibraryItem CloneAnItem(Catalog catalog, LibraryItem item)
+        {
+            LibraryItem clone = (LibraryItem)item.Clone();
+
+            catalog.AddAClone(this, clone);
+
+            return clone;
+        }
+
         /// <summary>
         /// Allows the librarian to add a book to a catalog
         /// </summary>
         /// <param name="catalog"></param>
         /// <param name="book"></param>
-        public void AddABook(Catalog catalog, Book book)
+        public void AddAnItem(Catalog catalog, LibraryItem item)
         {
-            catalog.AddABook(this, book);
+            catalog.AddAnItem(this, item);
         }
 
         /// <summary>
@@ -64,9 +73,9 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="catalog"></param>
         /// <param name="book"></param>
-        public void RemoveABook(Catalog catalog, Book book)
+        public void RemoveAnItem(Catalog catalog, LibraryItem item)
         {
-            catalog.RemoveABook(this, book);
+            catalog.RemoveAnItem(this, item);
         }
 
         /// <summary>

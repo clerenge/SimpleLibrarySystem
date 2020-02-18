@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleLibrarySystem.LibaryItems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,10 +31,18 @@ namespace SimpleLibrarySystem
             if (populateLibrary)
             {
                 List<Book> books = GetListOfRandomBooks(n);
-                foreach (Book b in books)
+                List<EBook> eBooks = GetListOfRandomEBooks(n);
+                List<Journal> journals = GetListOfRandomJournals(n);
+                List<Magazine> magazines = GetListOfRandomMagazines(n);
+
+                for(int i = 0; i <  n; i++)
                 {
-                    _catalog.AddABook(_librarian, b);
+                    _catalog.AddAnItem(_librarian, books.ElementAt(i));
+                    _catalog.AddAnItem(_librarian, eBooks.ElementAt(i));
+                    _catalog.AddAnItem(_librarian, journals.ElementAt(i));
+                    _catalog.AddAnItem(_librarian, magazines.ElementAt(i));
                 }
+
                 _students = GetListOfRandomStudents(n);
                 _instructors = GetListOfRandomInstructors(n);
             }
@@ -59,12 +68,12 @@ namespace SimpleLibrarySystem
         /// <param name="librarian">librarian object to be the SLS's only librarian that can add and remove books</param>
         /// <param name="students">student object to be the SLS's students</param>
         /// <param name="books">list of books for the SLS's catalog</param>
-        public SLS(Librarian librarian, List<Student> students, List<Instructor> instructors, List<Book> books)
+        public SLS(Librarian librarian, List<Student> students, List<Instructor> instructors, List<LibraryItem> items)
         {
             _catalog = new Catalog(librarian.GetId());
-            foreach(Book b in books)
+            foreach(LibraryItem i in items)
             {
-                _catalog.AddABook(librarian, b);
+                _catalog.AddAnItem(librarian, i);
             }
             _librarian = librarian;
             _students = students;
@@ -119,25 +128,17 @@ namespace SimpleLibrarySystem
         /// <param name="n">how many students we want to generate</param>
         public void GenerateRandomStudents(int n)
         {
-            Student s;
-            Random rand = new Random();
-
             for(int i = 0; i < n; i++)
             {
-                s = new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString());
-                _students.Add(s);
+                _students.Add(new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString()));
             }
         }
 
         public void GenerateRandomInstructors(int n)
         {
-            Instructor instructor;
-            Random rand = new Random();
-
             for (int i = 0; i < n; i++)
             {
-                instructor = new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString());
-                _instructors.Add(instructor);
+                _instructors.Add(new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString()));
             }
         }
 
@@ -147,13 +148,39 @@ namespace SimpleLibrarySystem
         /// <param name="n">how many books we want to generate</param>
         public void GenerateRandomBooks(int n)
         {
-            Book b;
-            Random rand = new Random();
+            for (int i = 0; i < n; i++)
+            {
+                _catalog.AddAnItem(this._librarian, new Book("Book" + i, "author", (1000 + i).ToString(), BookType.art, BookLocation.firstFloor));
+            }
+        }
+
+        public void GenerateRandomEBooks(int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                _catalog.AddAnItem(this._librarian, new EBook("EBook" + i, "author", (1000 + i).ToString(), BookType.art, "URL"+ i + ".com"));
+            }
+        }
+
+        public void GenerateRandomJournals(int n)
+        {
+            List<string> authors = new List<string>();
+            for(int i = 0; i < 5; i++)
+            {
+                authors.Add("Author " + i);
+            }
 
             for (int i = 0; i < n; i++)
             {
-                b = new Book(i, "Book" + i, "author", (1000 + i).ToString(), BookType.art, BookLocation.firstFloor);
-                _catalog.AddABook(this._librarian, b);
+                _catalog.AddAnItem(this._librarian, new Journal("Journal" + i, authors, i));
+            }
+        }
+
+        public void GenerateRandomMagazines(int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                _catalog.AddAnItem(this._librarian, new Magazine("Magazine" + i, "magazine info " + i));
             }
         }
 
@@ -164,14 +191,12 @@ namespace SimpleLibrarySystem
         /// <returns></returns>
         public List<Student> GetListOfRandomStudents(int n)
         {
-            Student s;
             List<Student> students = new List<Student>();
             Random rand = new Random();
 
             for (int i = 0; i < n; i++)
             {
-                s = new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString());
-                students.Add(s);
+                students.Add(new Student("Student" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "S" + (3000 + i).ToString()));
             }
 
             return students;
@@ -179,14 +204,12 @@ namespace SimpleLibrarySystem
 
         public List<Instructor> GetListOfRandomInstructors(int n)
         {
-            Instructor instructor;
             List<Instructor> instructors = new List<Instructor>();
             Random rand = new Random();
 
             for (int i = 0; i < n; i++)
             {
-                instructor = new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString());
-                instructors.Add(instructor);
+                instructors.Add(new Instructor("Instructor" + i, "lastName", "123 Street", i.ToString(), (2000 + i).ToString(), "E" + (3000 + i).ToString()));
             }
 
             return instructors;
@@ -205,12 +228,57 @@ namespace SimpleLibrarySystem
 
             for (int i = 0; i < n; i++)
             {
-                b = new Book(i, "Book" + i, "author", (1000 + i).ToString(), BookType.art, BookLocation.firstFloor);
-                books.Add(b);
+                books.Add(new Book("Book" + i, "author", (1000 + i).ToString(), BookType.art, BookLocation.firstFloor));
             }
 
             return books;
         }
+
+        public List<EBook> GetListOfRandomEBooks(int n)
+        {
+            List<EBook> Ebooks = new List<EBook>();
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i++)
+            {
+                Ebooks.Add(new EBook("EBook" + i, "author", (1000 + i).ToString(), BookType.art, "genericUrl" + n + ".com"));
+            }
+
+            return Ebooks;
+
+        }
+
+        public List<Journal> GetListOfRandomJournals(int n)
+        {
+            List<Journal> Journals = new List<Journal>();
+            List<string> Authors = new List<string>();
+            for(int i = 0; i < 5; i++)
+            {
+                Authors.Add("Author " + i);
+            }
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i++)
+            {
+                Journals.Add(new Journal("Book" + i, Authors, i));
+            }
+
+            return Journals;
+        }
+
+        public List<Magazine> GetListOfRandomMagazines(int n)
+        {
+            List<Magazine> Magazines = new List<Magazine>();
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i++)
+            {
+                Magazines.Add(new Magazine("Magazine" + i, "info " + i));
+            }
+
+            return Magazines;
+        }
+
 
         /// <summary>
         /// Returns the list of students in the SLS

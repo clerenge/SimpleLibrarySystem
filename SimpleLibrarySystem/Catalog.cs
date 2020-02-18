@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleLibrarySystem.LibaryItems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,8 @@ namespace SimpleLibrarySystem
 {
     public class Catalog
     {
-        private List<Book> _books;
-        private long _numOfBooks;
+        private List<LibraryItem> _libraryItems;
+        //private long _numOfBooks;
         private long _staffPassKey;
 
         /// <summary>
@@ -17,8 +18,8 @@ namespace SimpleLibrarySystem
         /// </summary>
         public Catalog()
         {
-            _books = new List<Book>();
-            _numOfBooks = 0;
+            _libraryItems = new List<LibraryItem>();
+            //_numOfBooks = 0;
         }
 
         /// <summary>
@@ -27,8 +28,8 @@ namespace SimpleLibrarySystem
         /// <param name="key"></param>
         public Catalog(long key)
         {
-            _books = new List<Book>();
-            _numOfBooks = 0;
+            _libraryItems = new List<LibraryItem>();
+            //_numOfBooks = 0;
             _staffPassKey = key;
         }
 
@@ -37,14 +38,39 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="librarian"></param>
         /// <param name="book"></param>
-        public void AddABook(Librarian librarian, Book book)
+        public void AddAnItem(Librarian librarian, LibraryItem item)
         {
             if(StaffAuthorized(librarian))
             {
-                if(book != null && !_books.Any(x => x.GetIsbn() == book.GetIsbn()))
+                if(item != null)
                 {
-                    _books.Add(new Book(book.GetBookId(), book.GetTitle(), book.GetAuthor(), book.GetIsbn(), book.GetType(), book.GetLocation()));
-                    _numOfBooks = _books.Count();
+                    if (item is EBook)
+                    {
+                        EBook eb = (EBook)item;
+
+                        _libraryItems.Add(new EBook(eb.Title, eb.Author, eb.ISBN, eb.Type, eb.URL));
+                    }
+                    else
+                    {
+                        if (item is Book)
+                        {
+                            Book b = (Book)item;
+
+                            _libraryItems.Add(new Book(b.Title, b.Author, b.ISBN, b.Type, b.Location));
+                        }
+                        else if (item is Journal)
+                        {
+                            Journal j = (Journal)item;
+
+                            _libraryItems.Add(new Journal(j.Title, j.Authors, j.Edition));
+                        }
+                        else if (item is Magazine)
+                        {
+                            Magazine m = (Magazine)item;
+
+                            _libraryItems.Add(new Magazine(m.Title, m.MagazineInfo));
+                        }
+                    }
                 }
                 else
                 {
@@ -52,7 +78,35 @@ namespace SimpleLibrarySystem
                     throw ex;
                 }
             }
+
+
            
+        }
+
+        public void AddAClone(Librarian librarian, LibraryItem clone)
+        {
+            if (StaffAuthorized(librarian))
+            {
+                if (clone != null)
+                {
+                    _libraryItems.Add(clone);
+                }
+            }
+        }
+
+        public int NumOfItems
+        {
+            get
+            {
+                if(_libraryItems != null)
+                {
+                    return _libraryItems.Count();
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
 
         /// <summary>
@@ -60,14 +114,13 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="librarian"></param>
         /// <param name="book"></param>
-        public void RemoveABook(Librarian librarian, Book book)
+        public void RemoveAnItem(Librarian librarian, LibraryItem item)
         {
             if(StaffAuthorized(librarian))
             {
-                if(book != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()))
+                if(item != null && _libraryItems.Any(x => x.ID == item.ID))
                 {
-                    _books.Remove(book);
-                    _numOfBooks = _books.Count();
+                    _libraryItems.Remove(item);
                 }
                 else
                 {
@@ -75,7 +128,19 @@ namespace SimpleLibrarySystem
                     throw ex;
                 }
             }
-           
+        }
+
+        public bool ItemExists(LibraryItem item)
+        {
+            foreach(LibraryItem i in _libraryItems)
+            {
+                if(i.ID == item.ID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -100,15 +165,15 @@ namespace SimpleLibrarySystem
         /// </summary>
         /// <param name="student"></param>
         /// <param name="book"></param>
-       public void CheckOutBook(Person person, Book book)
+       public void CheckOutItem(Person person, LibraryItem item)
        {
-            if(book != null && person != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()) && !person.ReachedRentLimit())
+            if(item != null && person != null && _libraryItems.Any(x => x.ID == item.ID) && !person.ReachedRentLimit())
             {
-                foreach(Book b in _books)
+                foreach(LibraryItem i in _libraryItems)
                 {
-                    if(b.IsbnMatch(book))
+                    if(i.ID == item.ID)
                     {
-                        b.MarkCheckOut(person);
+                        i.MarkCheckedOut(person);
                     }
                 }
             }
@@ -116,15 +181,15 @@ namespace SimpleLibrarySystem
 
 
 
-        public void ReturnBook(Person person, Book book)
+        public void ReturnAnItem(Person person, LibraryItem item)
         {
-            if(book != null && person != null && _books.Any(x => x.GetIsbn() == book.GetIsbn()))
+            if(item != null && person != null && _libraryItems.Any(x => x.ID == item.ID))
             {
-                foreach(Book b in _books)
+                foreach(LibraryItem i in _libraryItems)
                 {
-                    if(b.IsbnMatch(book))
+                    if(i.ID == item.ID)
                     {
-                        b.MarkReturned();
+                        i.MarkReturned();
                     }
                 }
             }
@@ -132,18 +197,123 @@ namespace SimpleLibrarySystem
 
  
 
+        public void PrintItems()
+        {
+            Console.WriteLine("Printing all items in Catalog");
+            foreach(LibraryItem item in _libraryItems)
+            {
+                item.PrintItemInfo();
+            }
+        }
+
         public void PrintBooks()
         {
-            Console.WriteLine("Printing all Books in Catalog");
-            foreach(Book b in _books)
+            Console.WriteLine("Printing all the books in the Catalog");
+            foreach(LibraryItem item in _libraryItems)
             {
-                b.PrintBookInfo();
+                if(item is Book)
+                {
+                    item.PrintItemInfo();
+                }
             }
+        }
+
+        public void PrintEBooks()
+        {
+            Console.WriteLine("Printing all the Ebooks in the Catalog");
+            foreach (LibraryItem item in _libraryItems)
+            {
+                if (item is EBook)
+                {
+                    item.PrintItemInfo();
+                }
+            }
+        }
+
+        public void PrintJournals()
+        {
+            Console.WriteLine("Printing all the journals in the Catalog");
+            foreach (LibraryItem item in _libraryItems)
+            {
+                if (item is Journal)
+                {
+                    item.PrintItemInfo();
+                }
+            }
+        }
+
+        public void PrintMagazines()
+        {
+            Console.WriteLine("Printing all the magazines in the Catalog");
+            foreach (LibraryItem item in _libraryItems)
+            {
+                if (item is Magazine)
+                {
+                    item.PrintItemInfo();
+                }
+            }
+        }
+
+        public List<LibraryItem> GetAllItems()
+        {
+            return _libraryItems;
         }
 
         public List<Book> GetAllBooks()
         {
-            return _books;
+            List<Book> books = new List<Book>();
+
+            foreach(LibraryItem item in _libraryItems)
+            {
+                if (!(item is EBook))
+                {
+                    if (item is Book)
+                    {
+                        books.Add((Book)item);
+                    }
+                }
+            }
+
+            return books;
+        }
+
+        public List<EBook> GetAllEBooks()
+        {
+            List<EBook> EBooks = new List<EBook>();
+            foreach (LibraryItem item in _libraryItems)
+            {
+                if (item is EBook)
+                {
+                    EBooks.Add((EBook)item);
+                }
+            }
+            return EBooks;
+        }
+
+        public List<Journal> GetAllJournals()
+        {
+            List<Journal> Journals = new List<Journal>();
+            foreach(LibraryItem item in _libraryItems)
+            {
+                if(item is Journal)
+                {
+                    Journals.Add((Journal)item);
+                }
+            }
+            return Journals;
+        }
+
+        public List<Magazine> GetAllMagazines()
+        {
+            List<Magazine> magazines = new List<Magazine>();
+            foreach(LibraryItem item in _libraryItems)
+            {
+                if(item is Magazine)
+                {
+                    magazines.Add((Magazine)item);
+                }
+            }
+            return magazines;
         }
     }
 }
